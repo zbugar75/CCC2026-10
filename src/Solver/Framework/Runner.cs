@@ -47,5 +47,5 @@ public static class Runner
 
     /// <summary>Runs the level on one input file and returns the output text.</summary>
     public static string Execute(ILevel level, string inputPath) =>
-        string.Join("\n", level.Run(InputReader.FromFile(inputPath))) + "\n";
+        string.Join("\n\n", level.Run(InputReader.FromFile(inputPath))) + "\n";
 }
