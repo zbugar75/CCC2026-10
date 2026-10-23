@@ -5,23 +5,22 @@ namespace Solver.Framework;
 public static class Runner
 {
     /// <summary>
-    /// Runs the level on every Input/LevelN/*.in file (example first) and writes Output/LevelN/*.out.
+    /// Runs the level on every Input/LevelN/in_*.txt file (example first) and writes Output/LevelN/out_*.txt.
     /// A failure in one file is reported and the remaining files still run.
     /// </summary>
     public static void Run(ILevel level)
     {
         var inputDir = Paths.InputDir(level.Number);
         var inputs = Directory.Exists(inputDir)
-            ? Directory.GetFiles(inputDir, "*.in")
+            ? Directory.GetFiles(inputDir, Paths.InputPattern)
                 .OrderBy(f => Path.GetFileName(f).Contains("example") ? 0 : 1)
-                .ThenBy(f => f.Length)
                 .ThenBy(f => f, StringComparer.OrdinalIgnoreCase)
                 .ToArray()
             : [];
 
         if (inputs.Length == 0)
         {
-            Console.WriteLine($"No .in files in {inputDir}");
+            Console.WriteLine($"No {Paths.InputPattern} files in {inputDir}");
             return;
         }
 
