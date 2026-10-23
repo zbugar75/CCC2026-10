@@ -14,6 +14,8 @@ public readonly struct Level2Case(int radius, int rows, int columns)
     public string[] Grid { get; } = new string[rows];
 }
 
+public readonly record struct Emitter(int Row, int Column, int Number);
+
 public sealed class Level2 : LevelBase<Level2Input>
 {
     public override int Number => 2;
@@ -49,32 +51,49 @@ public sealed class Level2 : LevelBase<Level2Input>
     private static string PrintNano(Level2Case level2Case)
     {
         var emitters = CollectEmitters(level2Case);
-        emitters.Select(e => ApplyEmitter(level2Case, e));
+        foreach (var e in emitters) ApplyEmitter(level2Case, e);
         return string.Join("\n", level2Case.Grid);
     }
 
-    //private static string GeneratedRadLine(int rad, int i)
-    //{
-    //    if (Math.Abs(i) == rad)
-    //    {
-    //        // rad x - + (rad+1) * with dash
-    //        return Dashes(rad) + AlternatingPattern('*', '-', rad + 1) + Dashes(rad);
-    //    }
+    // All digits in the grid, in reading order; Row/Column are 0-based indices into Grid[row][column].
+    private static IEnumerable<Emitter> CollectEmitters(Level2Case c)
+    {
+        for (var row = 0; row < c.Rows; row++)
+        {
+            var line = c.Grid[row];
+            for (var column = 0; column < line.Length; column++)
+            {
+                if (char.IsDigit(line[column]))
+                    yield return new Emitter(row, column, line[column] - '0');
+            }
+        }
+    }
 
-    //    // i* - / * - (rad - 1)
-    //    return Dashes(Math.Abs(i)) + "*-" + Places(2 * rad - Math.Abs(i) - 1) + "-*" + Dashes(Math.Abs(i));
-    //}
+    // Emitter number → (dRow, dCol) step; taken from the example output.
+    private static (int DRow, int DCol) Direction(int number) => number switch
+    {
+        1 => (0, 2),
+        2 => (1, 1),
+        3 => (1, -1),
+        4 => (0, -2),
+        5 => (-1, -1),
+        6 => (-1, 1),
+        _ => throw new ArgumentOutOfRangeException(nameof(number), number, "Unknown emitter number"),
+    };
 
-    //private static string Dashes(int i)
-    //{
-    //    return new string('-', i);
-    //}
-
-    //private static string Places(int i)
-    //{
-    //    return AlternatingPattern('O', '-', i);
-    //}
-
-    //static string AlternatingPattern(char c1, char c2, int n) =>
-    //    n <= 0 ? "" : string.Concat(Enumerable.Repeat($"{c1}{c2}", n - 1)) + c1;
+    // From the emitter, step in its direction and turn O into M until the next cell is not O.
+    private static void ApplyEmitter(Level2Case c, Emitter e)
+    {
+        var (dRow, dCol) = Direction(e.Number);
+        var row = e.Row + dRow;
+        var column = e.Column + dCol;
+        while (row >= 0 && row < c.Rows && column >= 0 && column < c.Grid[row].Length && c.Grid[row][column] == 'O')
+        {
+            var chars = c.Grid[row].ToCharArray();
+            chars[column] = 'M';
+            c.Grid[row] = new string(chars);
+            row += dRow;
+            column += dCol;
+        }
+    }
 }

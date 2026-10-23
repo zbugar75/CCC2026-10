@@ -2,6 +2,6 @@
 using Solver.Levels;
 
 // Change this line when moving to the next level.
-ILevel level = new Level1();
+ILevel level = new Level2();
 
 Runner.Run(level);
