@@ -58,7 +58,7 @@ public sealed class Level3 : LevelBase<Level3Input>
         return string.Join("\n", level3Case.Grid);
     }
 
-    // Hits from 2 on decide the cell: (hits - 2) % 5 → 0,1,2 = M (matter), 3,4 = O (destroyed).
+    // 0–1 hits: unchanged; exactly 2 hits: M (matter); 3+ hits: O (destroyed).
     private static void ApplyHits(Level3Case level3Case)
     {
         for (var row = 0; row < level3Case.Rows; row++)
@@ -67,11 +67,11 @@ public sealed class Level3 : LevelBase<Level3Input>
             for (var column = 0; column < level3Case.Columns; column++)
             {
                 var hits = level3Case.Hits[row, column];
-                if (hits - 2 < 0) continue;
+                if (hits < 2) continue;
                 if (chars[column] is not ('O' or 'M'))
                     throw new InvalidOperationException(
                         $"Cell ({row},{column}) has {hits} hits but holds '{chars[column]}' instead of O/M.");
-                chars[column] = (hits - 2) % 5 <= 2 ? 'M' : 'O';
+                chars[column] = hits == 2 ? 'M' : 'O';
             }
             level3Case.Grid[row] = new string(chars);
         }
@@ -104,7 +104,7 @@ public sealed class Level3 : LevelBase<Level3Input>
     };
 
     // From the emitter, step in its direction over O/M cells and count the hits.
-    // An M starts counting at 3 hits; the grid itself is only updated later by ApplyHits.
+    // Only counts hits; the grid itself is updated later by ApplyHits.
     private static void ApplyEmitter(Level3Case c, Level3Emitter e)
     {
         var (dRow, dCol) = Direction(e.Number);
@@ -112,10 +112,7 @@ public sealed class Level3 : LevelBase<Level3Input>
         var column = e.Column + dCol;
         while (row >= 0 && row < c.Rows && column >= 0 && column < c.Columns && c.Grid[row][column] is 'O' or 'M')
         {
-            if (c.Grid[row][column] == 'M' && c.Hits[row, column] == 0)
-                c.Hits[row, column] = 3;
-            else
-                c.Hits[row, column]++;
+            c.Hits[row, column]++;
             row += dRow;
             column += dCol;
         }
