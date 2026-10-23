@@ -18,6 +18,15 @@ public sealed class Level1 : LevelBase<Level1Input>
     public override IEnumerable<string> Solve(Level1Input input) =>
         input.Cases.Select(SolveCase);
 
-    private static string SolveCase(string line) =>
-        throw new NotImplementedException();
+    private static string SolveCase(string line)
+    {
+        var rad = line.Cast<int>;
+        string result = PrintNano(line);
+        return result;
+    }
+
+    private static string PrintNano(string line)
+    {
+        return null;
+    }
 }
