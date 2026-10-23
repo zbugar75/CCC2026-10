@@ -30,7 +30,7 @@ The level is intentionally hardcoded in `Program.cs`, not a command-line argumen
 
 ## Structure
 
-- `Framework/InputReader.cs` — line cursor: `Line`, `Lines(n)`, `Rest`, `Peek`, `Int`, `Long`,
+- `Framework/InputReader.cs` — line cursor: `Line`, `Lines(n)`, `Rest`, `Peek`, `SkipBlank` (blank separator lines), `Int`, `Long`,
   `Ints`, `Longs`, `Tokens` (split on space/tab/comma/semicolon), `Grid(rows)`.
 - `Framework/LevelBase.cs` — `LevelBase<TInput>`: `Parse(InputReader) → TInput`, `Solve(TInput) → IEnumerable<string>`.
   The level number (`Number`) drives the Input/Output folder names.

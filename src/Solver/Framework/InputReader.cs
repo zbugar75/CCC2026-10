@@ -24,6 +24,13 @@ public sealed class InputReader
     /// <summary>Next raw line.</summary>
     public string Line() => HasMore ? _lines[_position++] : throw EndOfInput();
 
+    /// <summary>Consumes empty / whitespace-only lines at the cursor (e.g. separators between cases).</summary>
+    public void SkipBlank()
+    {
+        while (HasMore && string.IsNullOrWhiteSpace(_lines[_position]))
+            _position++;
+    }
+
     /// <summary>Next <paramref name="count"/> raw lines.</summary>
     public string[] Lines(int count) => Enumerable.Range(0, count).Select(_ => Line()).ToArray();
 
