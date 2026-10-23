@@ -25,14 +25,17 @@ public sealed class Level1 : LevelBase<Level1Input>
         return result;
     }
 
-    private static string PrintNano(int rad)
+    private static string PrintNano(int rad) => string.Join("\n", GenerateGrid(rad));
+
+    // Empty board for the radius: (2*rad+1) rows of GeneratedRadLine; also used by Level 4.
+    internal static string[] GenerateGrid(int rad)
     {
         var result = new string[2 * rad + 1];
         for (var i = -rad; i <= rad; i++)
         {
             result[i + rad] = GeneratedRadLine(rad, i);
         }
-        return string.Join("\n", result);
+        return result;
     }
 
     private static string GeneratedRadLine(int rad, int i)
