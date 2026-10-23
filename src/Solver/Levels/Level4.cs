@@ -16,7 +16,9 @@ public readonly struct Level4Case(int radius, int rows, int columns)
     public int[,] Hits { get; } = new int[rows, columns];
 }
 
-public readonly record struct Level4Emitter(int Row, int Column, int Number);
+public enum EmitterStatus { Off, On }
+
+public readonly record struct Level4Emitter(int Row, int Column, int Number, EmitterStatus Status = EmitterStatus.Off);
 
 public sealed class Level4 : LevelBase<Level4Input>
 {
@@ -77,7 +79,7 @@ public sealed class Level4 : LevelBase<Level4Input>
             (rad + 1, 2 * rad + 1),     // 6
         ];
         for (var i = 0; i < positions.Length; i++)
-            yield return new Level4Emitter(positions[i].Y - 1, positions[i].X - 1, i + 1);
+            yield return new Level4Emitter(positions[i].Y - 1, positions[i].X - 1, i + 1, EmitterStatus.Off);
     }
 
     // Emitter number → (dRow, dCol) step; taken from the example output.
